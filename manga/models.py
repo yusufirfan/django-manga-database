@@ -1,3 +1,4 @@
+from typing import Iterable, Optional
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -48,6 +49,8 @@ class Manga(FixModel):
     name = models.CharField(max_length=255)
     desc = models.TextField()
     original_name = models.CharField(max_length=255)
+    language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
+    original_language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True)
     volume = models.PositiveSmallIntegerField()
     total_volume = models.PositiveSmallIntegerField()
     publisher = models.ForeignKey(Publisher, on_delete=models.SET_NULL, null=True)
@@ -58,6 +61,15 @@ class Manga(FixModel):
 
     def __str__(self):
         return f'{self.name} - {self.original_name}'
+    
+    def save(self, *args, **kwargs):
+        manga = Manga.objects.get(id=self.manga_id)
+        tot_volume = MangaVolume.objects.get(language=manga.original_language).count()
+        manga.total_volume = tot_volume
+        loc_volume = MangaVolume.objects.get(language=manga.language).count()
+        manga.volume = loc_volume
+        manga.save()
+        return super().save(*args, **kwargs)
 
 class MangaVolume(FixModel):
     manga = models.ForeignKey(Manga, on_delete=models.SET_NULL, null=True)
