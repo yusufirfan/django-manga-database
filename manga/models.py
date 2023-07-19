@@ -1,4 +1,4 @@
-from typing import Iterable, Optional
+from typing import Any, Dict, Iterable, Optional, Tuple
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -51,8 +51,8 @@ class Manga(FixModel):
     original_name = models.CharField(max_length=255)
     language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, related_name='local_name')
     original_language = models.ForeignKey(Language, on_delete=models.SET_NULL, null=True, related_name='original_name')
-    volume = models.PositiveSmallIntegerField(null=True, blank=True)
-    total_volume = models.PositiveSmallIntegerField(null=True, blank=True)
+    # volume = models.PositiveSmallIntegerField(null=True, blank=True)
+    # total_volume = models.PositiveSmallIntegerField(null=True, blank=True)
     publisher = models.ForeignKey(Publisher, on_delete=models.SET_NULL, null=True)
     category = models.ManyToManyField(Category)
     artist = models.ForeignKey(Artist, on_delete=models.SET_NULL, null=True)
@@ -75,14 +75,14 @@ class MangaVolume(FixModel):
     def __str__(self):
         return f'[{self.language}] {self.manga} - {self.vol_num} - {self.vol_name}'
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            manga = Manga.objects.get(id=self.manga_id)
-            tot_volume = manga.get_volume_count_for_language(manga.original_language)
-            loc_volume = manga.get_volume_count_for_language(manga.language)
+    # def save(self, *args, **kwargs):
+    #     if not self.pk:
+    #         manga = Manga.objects.get(id=self.manga_id)
 
-            manga.total_volume = tot_volume
-            manga.volume = loc_volume
-            manga.save()
+    #         if self.language == manga.original_language:
+    #             manga.total_volume+=1
+    #         elif self.language == manga.language:
+    #             manga.volume+=1
 
-        return super().save(*args, **kwargs)
+    #         manga.save()
+    #     return super().save(*args, **kwargs)
