@@ -62,8 +62,8 @@ class Manga(FixModel):
     def __str__(self):
         return f'{self.name} - {self.original_name}'
 
-    def get_volume_count_for_language(self, language):
-        return MangaVolume.objects.filter(manga=self, language=language).count()
+    # def get_volume_count_for_language(self, language):
+    #     return MangaVolume.objects.filter(manga=self, language=language).count()
 
 class MangaVolume(FixModel):
     manga = models.ForeignKey(Manga, on_delete=models.SET_NULL, null=True)
