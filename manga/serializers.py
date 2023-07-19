@@ -8,4 +8,82 @@ class FixSerializer(serializers.ModelSerializer):
         validated_data['user_id'] = self.context['request'].user.id
         return super().create(validated_data)
     
-from .models import *
+from .models import Language, Publisher, Artist, Author, Category, Manga, MangaVolume
+
+class LanguageSerializer(FixSerializer):
+    language_total = serializers.SerializerMethodField()
+
+    def get_language_total(self, obj):
+        return Language.objects.filter(language_id=obj.id).count()
+    
+    class Meta:
+        model = Language
+        exclude = []
+
+class PublisherSerializer(FixSerializer):
+    publisher_total = serializers.SerializerMethodField()
+
+    def get_publisher_total(self, obj):
+        return Publisher.objects.filter(publisher_id=obj.id).count()
+    
+    class Meta:
+        model = Publisher
+        exclude = []
+
+class ArtistSerializer(FixSerializer):
+    artist_total = serializers.SerializerMethodField()
+
+    def get_artist_total(self, obj):
+        return Artist.objects.filter(artist_id=obj.id).count()
+    
+    class Meta:
+        model = Artist
+        exclude = []
+
+class AuthorSerializer(FixSerializer):
+    author_total = serializers.SerializerMethodField()
+
+    def get_author_total(self, obj):
+        return Author.objects.filter(author_id=obj.id).count()
+    
+    class Meta:
+        model = Author
+        exclude = []
+
+class CategorySerializer(FixSerializer):
+    category_total = serializers.SerializerMethodField()
+
+    def get_category_total(self, obj):
+        return Category.objects.filter(category_id=obj.id).count()
+    
+    class Meta:
+        model = Category
+        exclude = []
+
+class MangaSerializer(FixSerializer):
+    language = serializers.StringRelatedField()
+    original_language = serializers.StringRelatedField()
+    local_volume = serializers.SerializerMethodField()
+    total_volume = serializers.SerializerMethodField()
+    publisher = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
+    artist = serializers.SerializerMethodField()
+    author = serializers.SerializerMethodField()
+    
+    def get_local_volume(self, obj):
+        return MangaVolume.objects.filter(manga=self, language=obj.language).count()
+    
+    def get_total_volume(self, obj):
+        return MangaVolume.objects.filter(manga=self, language=obj.original_language).count()
+
+    class Meta:
+        model = Manga
+        exclude = []
+
+class MangVolumeSerializer(FixSerializer):
+    manga = serializers.SerializerMethodField()
+    language = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Manga
+        exclude = []
