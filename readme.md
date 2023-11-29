@@ -14,6 +14,8 @@ Rename .env-sample file to .env and change SECRET_KEY
 #3 - pip install -r requirements.txt
 
 #4 - python manage.py migrate
+
+#5 - python manage.py runserver
 ```
 
 [dj-rest-auth](https://dj-rest-auth.readthedocs.io/en/latest/index.html) 
