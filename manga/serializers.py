@@ -68,7 +68,9 @@ class CategorySerializer(FixSerializer):
 
 class MangaSerializer(FixSerializer):
     language = serializers.StringRelatedField()
+    language_slug = serializers.SerializerMethodField()
     original_language = serializers.StringRelatedField()
+    original_language_slug = serializers.SerializerMethodField()
     local_volume = serializers.SerializerMethodField()
     total_volume = serializers.SerializerMethodField()
     publisher = serializers.StringRelatedField()
@@ -81,6 +83,22 @@ class MangaSerializer(FixSerializer):
     
     def get_total_volume(self, obj):
         return MangaVolume.objects.filter(manga=obj, language=obj.original_language).count()
+    
+    def get_language_slug(self, obj):
+        try:
+            language_instance = Language.objects.get(name=obj.language)
+            return language_instance.slug
+        except Language.DoesNotExist:
+            return None
+
+        
+    def get_original_language_slug(self, obj):
+        try:
+            language_instance = Language.objects.get(name=obj.original_language)
+            return language_instance.slug
+        except Language.DoesNotExist:
+            return None
+
 
     class Meta:
         model = Manga
